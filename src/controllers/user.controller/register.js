@@ -17,7 +17,7 @@ export const register = async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     const errorMessages = errors.array().map((error) => error.msg);
-    res.status(400).json(error(errorMessages.join(", ")));
+    return res.status(400).json(error(errorMessages.join(", ")));
   }
 
   try {

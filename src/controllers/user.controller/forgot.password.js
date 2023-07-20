@@ -4,11 +4,24 @@ import { error, success } from "../../utils/response.js";
 import { createTransporter, sendMail } from "../../utils/send.email.js";
 import { generateOTP } from "../../utils/generate.otp.js";
 import { hashData, verifyHashedData } from "../../utils/hash.data.js";
+import {
+  newPasswordValidator,
+  sendOtpNewPasswordValidator,
+} from "../../validation/auth.validation.js";
+import { validationResult } from "express-validator";
 
 const { AUTH_EMAIL } = process.env;
 
 export const sendOtpNewPassword = async (req, res) => {
   const { email } = req.body;
+  await Promise.all(
+    sendOtpNewPasswordValidator.map((validator) => validator.run(req))
+  );
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    const errorMessages = errors.array().map((error) => error.msg);
+    return res.status(400).json(error(errorMessages.join(", ")));
+  }
 
   try {
     const existingUser = await User.findOne({
@@ -87,6 +100,14 @@ export const sendOtpNewPassword = async (req, res) => {
 
 export const newPassword = async (req, res) => {
   const { email, otp, password, confPassword } = req.body;
+  await Promise.all(
+    newPasswordValidator.map((validator) => validator.run(req))
+  );
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    const errorMessages = errors.array().map((error) => error.msg);
+    return res.status(400).json(error(errorMessages.join(", ")));
+  }
 
   try {
     const matchedOTPRecord = await Otp.findOne({
