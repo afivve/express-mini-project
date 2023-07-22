@@ -1,6 +1,6 @@
-import bcrypt from "bcrypt";
+const bcrypt = require("bcrypt");
 
-export const hashData = async (data, saltRounds = 10) => {
+const hashData = async (data, saltRounds = 10) => {
   try {
     const hashedData = await bcrypt.hash(data, saltRounds);
     return hashedData;
@@ -9,11 +9,16 @@ export const hashData = async (data, saltRounds = 10) => {
   }
 };
 
-export const verifyHashedData = async (unhashed, hashed) => {
+const verifyHashedData = async (unhashed, hashed) => {
   try {
     const match = await bcrypt.compare(unhashed, hashed);
     return match;
   } catch (err) {
     throw err;
   }
+};
+
+module.exports = {
+  hashData,
+  verifyHashedData,
 };

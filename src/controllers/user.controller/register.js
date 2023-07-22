@@ -1,16 +1,16 @@
-import User from "../../models/user.model.js";
-import Otp from "../../models/otp.model.js";
-import { nanoid } from "nanoid";
-import { validationResult } from "express-validator";
-import { registerValidator } from "../../validation/auth.validation.js";
-import { error, success } from "../../utils/response.js";
-import { hashData } from "../../utils/hash.data.js";
-import { createTransporter, sendMail } from "../../utils/send.email.js";
-import { generateOTP } from "../../utils/generate.otp.js";
+const User = require("../../models/user.model.js");
+const Otp = require("../../models/otp.model.js");
+const nanoid = require("nanoid");
+const { validationResult } = require("express-validator");
+const { registerValidator } = require("../../validation/auth.validation.js");
+const { error, success } = require("../../utils/response.js");
+const { hashData } = require("../../utils/hash.data.js");
+const { createTransporter, sendMail } = require("../../utils/send.email.js");
+const { generateOTP } = require("../../utils/generate.otp.js");
 
 const { AUTH_EMAIL } = process.env;
 
-export const register = async (req, res) => {
+const register = async (req, res) => {
   const { name, email, password, confPassword } = req.body;
 
   await Promise.all(registerValidator.map((validator) => validator.run(req)));
@@ -97,4 +97,8 @@ export const register = async (req, res) => {
     console.log(err);
     return res.status(500).json(error("Kesalahan Server"));
   }
+};
+
+module.exports = {
+  register,
 };

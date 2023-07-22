@@ -1,4 +1,4 @@
-export const success = (msg, data = null) => {
+const success = (msg, data = null) => {
   return {
     error: false,
     message: msg,
@@ -6,13 +6,14 @@ export const success = (msg, data = null) => {
   };
 };
 
-export const error = (msg, data = null) => {
+const error = (msg, data = null) => {
   return {
     error: true,
     message: msg,
   };
 };
 
-export const sendResponse = (res, statusCode, message) => {
-  res.status(statusCode).json({ message });
+module.exports = {
+  success,
+  error,
 };

@@ -1,12 +1,12 @@
-import User from "../../models/user.model.js";
-import Otp from "../../models/otp.model.js";
+const User = require("../../models/user.model.js");
+const Otp = require("../../models/otp.model.js");
 
-import { verifyHashedData } from "../../utils/hash.data.js";
-import { error, success } from "../../utils/response.js";
-import { verifyUserValidator } from "../../validation/auth.validation.js";
-import { validationResult } from "express-validator";
+const { verifyHashedData } = require("../../utils/hash.data.js");
+const { error, success } = require("../../utils/response.js");
+const { verifyUserValidator } = require("../../validation/auth.validation.js");
+const { validationResult } = require("express-validator");
 
-export const verifyUser = async (req, res) => {
+const verifyUser = async (req, res) => {
   const { email, otp } = req.body;
   await Promise.all(verifyUserValidator.map((validator) => validator.run(req)));
   const errors = validationResult(req);
@@ -59,4 +59,8 @@ export const verifyUser = async (req, res) => {
     console.log(err);
     return res.status(500).json(error("Kesalahan Internal Server"));
   }
+};
+
+module.exports = {
+  verifyUser,
 };

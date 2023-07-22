@@ -1,18 +1,18 @@
-import User from "../../models/user.model.js";
-import Otp from "../../models/otp.model.js";
-import { error, success } from "../../utils/response.js";
-import { createTransporter, sendMail } from "../../utils/send.email.js";
-import { generateOTP } from "../../utils/generate.otp.js";
-import { hashData, verifyHashedData } from "../../utils/hash.data.js";
-import {
+const User = require("../../models/user.model.js");
+const Otp = require("../../models/otp.model.js");
+const { error, success } = require("../../utils/response.js");
+const { createTransporter, sendMail } = require("../../utils/send.email.js");
+const { generateOTP } = require("../../utils/generate.otp.js");
+const { hashData, verifyHashedData } = require("../../utils/hash.data.js");
+const {
   newPasswordValidator,
   sendOtpNewPasswordValidator,
-} from "../../validation/auth.validation.js";
-import { validationResult } from "express-validator";
+} = require("../../validation/auth.validation.js");
+const { validationResult } = require("express-validator");
 
 const { AUTH_EMAIL } = process.env;
 
-export const sendOtpNewPassword = async (req, res) => {
+const sendOtpNewPassword = async (req, res) => {
   const { email } = req.body;
   await Promise.all(
     sendOtpNewPasswordValidator.map((validator) => validator.run(req))
@@ -98,7 +98,7 @@ export const sendOtpNewPassword = async (req, res) => {
   }
 };
 
-export const newPassword = async (req, res) => {
+const newPassword = async (req, res) => {
   const { email, otp, password, confPassword } = req.body;
   await Promise.all(
     newPasswordValidator.map((validator) => validator.run(req))
@@ -156,4 +156,9 @@ export const newPassword = async (req, res) => {
     console.log(err);
     return res.status(500).json(error("Kesalahan Internal Server"));
   }
+};
+
+module.exports = {
+  sendOtpNewPassword,
+  newPassword,
 };

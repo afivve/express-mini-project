@@ -1,6 +1,6 @@
-import { body } from "express-validator";
+const { body } = require("express-validator");
 
-export const registerValidator = [
+const registerValidator = [
   body("name").notEmpty().withMessage("Nama wajib diisi"),
   body("email").notEmpty().isEmail().withMessage("Email tidak valid"),
   body("password")
@@ -19,7 +19,7 @@ export const registerValidator = [
     }),
 ];
 
-export const loginValidator = [
+const loginValidator = [
   body("email").notEmpty().isEmail().withMessage("Email tidak valid"),
   body("password")
     .notEmpty()
@@ -28,16 +28,16 @@ export const loginValidator = [
     .withMessage("Kata sandi minimal 8 karakter"),
 ];
 
-export const verifyUserValidator = [
+const verifyUserValidator = [
   body("email").notEmpty().isEmail().withMessage("Email tidak valid"),
   body("otp").notEmpty(),
 ];
 
-export const sendOtpNewPasswordValidator = [
+const sendOtpNewPasswordValidator = [
   body("email").notEmpty().isEmail().withMessage("Email tidak valid"),
 ];
 
-export const newPasswordValidator = [
+const newPasswordValidator = [
   body("email").notEmpty().isEmail().withMessage("Email tidak valid"),
   body("otp").notEmpty(),
   body("password")
@@ -55,3 +55,11 @@ export const newPasswordValidator = [
       return true;
     }),
 ];
+
+module.exports = {
+  registerValidator,
+  loginValidator,
+  verifyUserValidator,
+  sendOtpNewPasswordValidator,
+  newPasswordValidator,
+};

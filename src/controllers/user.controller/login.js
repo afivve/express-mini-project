@@ -1,12 +1,12 @@
-import User from "../../models/user.model.js";
+const User = require("../../models/user.model.js");
 
-import { error, success } from "../../utils/response.js";
-import { verifyHashedData } from "../../utils/hash.data.js";
-import { createToken } from "../../utils/create.token.js";
-import { loginValidator } from "../../validation/auth.validation.js";
-import { validationResult } from "express-validator";
+const { error, success } = require("../../utils/response.js");
+const { verifyHashedData } = require("../../utils/hash.data.js");
+const { createToken } = require("../../utils/create.token.js");
+const { loginValidator } = require("../../validation/auth.validation.js");
+const { validationResult } = require("express-validator");
 
-export const login = async (req, res) => {
+const login = async (req, res) => {
   const { email, password } = req.body;
   await Promise.all(loginValidator.map((validator) => validator.run(req)));
   const errors = validationResult(req);
@@ -57,4 +57,8 @@ export const login = async (req, res) => {
     console.log(err);
     return res.status(500).json(error("Kesalahan Server"));
   }
+};
+
+module.exports = {
+  login,
 };

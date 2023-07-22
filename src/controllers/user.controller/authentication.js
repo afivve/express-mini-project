@@ -1,15 +1,6 @@
-import { nanoid } from "nanoid";
-import { validationResult } from "express-validator";
+const User = require("../../models/user.model.js");
 
-import { registerValidator } from "../../validation/auth.validation.js";
-
-import { error, success } from "../../utils/response.js";
-import { hashData, verifyHashedData } from "../../utils/hash.data.js";
-import { createToken } from "../../utils/create.token.js";
-
-import User from "../../models/user.model.js";
-
-export const user = async (req, res) => {
+const user = async (req, res) => {
   try {
     const users = await User.findAll();
     res.status(200).json(users);
@@ -103,3 +94,7 @@ export const login = async (req, res) => {
     res.status(500).json(error("Kesalahan Server"));
   }
 }; */
+
+module.exports = {
+  user,
+};

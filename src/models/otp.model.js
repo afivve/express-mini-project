@@ -1,7 +1,5 @@
-import { Sequelize } from "sequelize";
-import db from "../config/Database.js";
-
-const { DataTypes } = Sequelize;
+const { Sequelize, DataTypes } = require("sequelize");
+const db = require("../config/Database.js");
 
 const Otp = db.define(
   "otp",
@@ -35,8 +33,8 @@ const Otp = db.define(
   }
 );
 
-export default Otp;
-
 (async () => {
   await db.sync();
 })();
+
+module.exports = Otp;

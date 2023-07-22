@@ -1,20 +1,16 @@
-import express from "express";
-import cors from "cors";
-
-import bodyParser from "body-parser";
-
-import dotenv from "dotenv";
+const express = require("express");
+const cors = require("cors");
+const bodyParser = require("body-parser");
+const dotenv = require("dotenv");
 dotenv.config();
 
-import Route from "./src/routes/index.js";
+const Route = require("./src/routes/index.js");
 
 const app = express();
 
 app.use(cors());
-
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-
 app.use(express.json());
 
 app.use(Route);
