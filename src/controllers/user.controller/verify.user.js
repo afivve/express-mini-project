@@ -1,5 +1,4 @@
-const User = require("../../models/user.model.js");
-const Otp = require("../../models/otp.model.js");
+const { User, Otp } = require("../../database/models");
 
 const { verifyHashedData } = require("../../utils/hash.data.js");
 const { error, success } = require("../../utils/response.js");

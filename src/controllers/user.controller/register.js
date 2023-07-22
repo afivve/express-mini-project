@@ -1,6 +1,8 @@
-const User = require("../../models/user.model.js");
-const Otp = require("../../models/otp.model.js");
-const nanoid = require("nanoid");
+// const User = require("../../models/user.model.js");
+// const Otp = require("../../models/otp.model.js");
+
+const { User, Otp } = require("../../database/models");
+const { nanoid } = require("nanoid");
 const { validationResult } = require("express-validator");
 const { registerValidator } = require("../../validation/auth.validation.js");
 const { error, success } = require("../../utils/response.js");

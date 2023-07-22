@@ -1,4 +1,4 @@
-const User = require("../../models/user.model.js");
+const { User } = require("../../database/models");
 
 const { error, success } = require("../../utils/response.js");
 const { verifyHashedData } = require("../../utils/hash.data.js");
