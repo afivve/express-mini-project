@@ -1,14 +1,12 @@
-// const User = require("../../models/user.model.js");
-// const Otp = require("../../models/otp.model.js");
+const { User, Otp } = require("../../../database/models");
 
-const { User, Otp } = require("../../database/models");
 const { nanoid } = require("nanoid");
 const { validationResult } = require("express-validator");
-const { registerValidator } = require("../../validation/auth.validation.js");
-const { error, success } = require("../../utils/response.js");
-const { hashData } = require("../../utils/hash.data.js");
-const { createTransporter, sendMail } = require("../../utils/send.email.js");
-const { generateOTP } = require("../../utils/generate.otp.js");
+const { registerValidator } = require("../../../validation/auth.validation.js");
+const { error, success } = require("../../../utils/response.js");
+const { hashData } = require("../../../utils/hash.data.js");
+/* const { createTransporter, sendMail } = require("../../../utils/send.email.js");
+const { generateOTP } = require("../../../utils/generate.otp.js"); */
 
 const { AUTH_EMAIL } = process.env;
 
@@ -23,15 +21,15 @@ const register = async (req, res) => {
   }
 
   try {
-    const existingUser = await User.findOne({ where: { email } });
+    const existing_user = await User.findOne({ where: { email } });
 
-    if (existingUser)
+    if (existing_user)
       return res.status(409).json(error("Email sudah terdaftar"));
 
-    const hashPassword = await hashData(password);
-    const userId = nanoid();
+    const hash_password = await hashData(password);
+    const user_id = nanoid();
 
-    try {
+    /*  try {
       const transporter = createTransporter();
       await transporter.verify();
     } catch (err) {
@@ -39,24 +37,24 @@ const register = async (req, res) => {
       return res
         .status(500)
         .json(error("Kesalahan Internal Server. Gagal Mengirim OTP"));
-    }
+    } */
 
     await User.create({
-      id: userId,
+      id: user_id,
       name: name,
       email: email,
-      password: hashPassword,
+      password: hash_password,
     });
 
     /* Create OTP */
-    try {
-      const existingOTPEmail = await Otp.findOne({
+    /* try {
+      const existing_email_otp = await Otp.findOne({
         where: {
           email: email,
         },
       });
 
-      if (existingOTPEmail) {
+      if (existing_email_otp) {
         await Otp.destroy({
           where: {
             email: email,
@@ -64,33 +62,33 @@ const register = async (req, res) => {
         });
       }
 
-      const generatedOTP = await generateOTP();
+      const generated_otp = await generateOTP();
 
       const mailOptions = {
         from: AUTH_EMAIL,
         to: email,
         subject: "Verifikasi OTP",
         html: `<p>Verifikasi OTP</p>
-        <p style="color: tomato; font-size:25px; letter-spacing: 2px;"><b>${generatedOTP}</b></p>
+        <p style="color: tomato; font-size:25px; letter-spacing: 2px;"><b>${generated_otp}</b></p>
         <p>This code <b>expires in 1 hour(s)</b>.</p>`,
       };
 
       await sendMail(mailOptions);
 
-      const hashedOTP = await hashData(generatedOTP);
-      const createdAt = new Date();
-      const expiresAt = new Date(Date.now() + 3600000);
+      const hashed_otp = await hashData(generated_otp);
+      const created_at = new Date();
+      const expires_at = new Date(Date.now() + 3600000);
 
       await Otp.create({
         email: email,
-        otp: hashedOTP,
-        createdAt: createdAt,
-        expiresAt: expiresAt,
+        otp: hashed_otp,
+        createdAt: created_at,
+        expiresAt: expires_at,
       });
     } catch (err) {
       console.log(err);
       return res.status(500).json(error("Kesalahan Server. Gagal Membuat OTP"));
-    }
+    } */
 
     res
       .status(201)

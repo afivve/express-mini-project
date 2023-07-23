@@ -1,8 +1,10 @@
-const { User, Otp } = require("../../database/models");
+const { User, Otp } = require("../../../database/models");
 
-const { verifyHashedData } = require("../../utils/hash.data.js");
-const { error, success } = require("../../utils/response.js");
-const { verifyUserValidator } = require("../../validation/auth.validation.js");
+const { verifyHashedData } = require("../../../utils/hash.data.js");
+const { error, success } = require("../../../utils/response.js");
+const {
+  verifyUserValidator,
+} = require("../../../validation/auth.validation.js");
 const { validationResult } = require("express-validator");
 
 const verifyUser = async (req, res) => {
@@ -15,15 +17,15 @@ const verifyUser = async (req, res) => {
   }
 
   try {
-    const matchedOTPRecord = await Otp.findOne({
+    const matched_otp_record = await Otp.findOne({
       where: {
         email: email,
       },
     });
 
-    if (!matchedOTPRecord) res.status(404).json(error("OTP Tidak Ditemukan"));
+    if (!matched_otp_record) res.status(404).json(error("OTP Tidak Ditemukan"));
 
-    const { expiresAt } = matchedOTPRecord;
+    const { expiresAt } = matched_otp_record;
 
     if (expiresAt < Date.now()) {
       await Otp.destroy({
@@ -34,10 +36,10 @@ const verifyUser = async (req, res) => {
       res.status(400).json(error("OTP Telah Kadaluwarsa"));
     }
 
-    const hashedOTP = matchedOTPRecord.otp;
-    const verifyOTP = await verifyHashedData(otp, hashedOTP);
+    const hashed_data = matched_otp_record.otp;
+    const verify_otp = await verifyHashedData(otp, hashed_data);
 
-    if (verifyOTP) {
+    if (verify_otp) {
       await User.update(
         { verified: true },
         {
@@ -51,7 +53,7 @@ const verifyUser = async (req, res) => {
           email: email,
         },
       });
-      return res.status(200).json(success("Verifikasi OTP Sukses", verifyOTP));
+      return res.status(200).json(success("Verifikasi OTP Sukses", verify_otp));
     }
     return res.status(500).json(error("OTP Tidak Valid"));
   } catch (err) {

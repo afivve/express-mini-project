@@ -1,12 +1,12 @@
-const { User, Otp } = require("../../database/models");
-const { error, success } = require("../../utils/response.js");
-const { createTransporter, sendMail } = require("../../utils/send.email.js");
-const { generateOTP } = require("../../utils/generate.otp.js");
-const { hashData, verifyHashedData } = require("../../utils/hash.data.js");
+const { User, Otp } = require("../../../database/models");
+const { error, success } = require("../../../utils/response.js");
+const { createTransporter, sendMail } = require("../../../utils/send.email.js");
+const { generateOTP } = require("../../../utils/generate.otp.js");
+const { hashData, verifyHashedData } = require("../../../utils/hash.data.js");
 const {
   newPasswordValidator,
   sendOtpNewPasswordValidator,
-} = require("../../validation/auth.validation.js");
+} = require("../../../validation/auth.validation.js");
 const { validationResult } = require("express-validator");
 
 const { AUTH_EMAIL } = process.env;
@@ -23,16 +23,16 @@ const sendOtpNewPassword = async (req, res) => {
   }
 
   try {
-    const existingUser = await User.findOne({
+    const existing_user = await User.findOne({
       where: {
         email: email,
       },
     });
 
-    if (!existingUser)
+    if (!existing_user)
       return res.status(404).json(error("User tidak ditemukan"));
 
-    if (!existingUser.verified)
+    if (!existing_user.verified)
       return res.status(400).json(error("User belum diverifikasi"));
 
     try {
@@ -45,13 +45,13 @@ const sendOtpNewPassword = async (req, res) => {
         .json(error("Kesalahan Internal Server. Gagal Mengirim OTP"));
     }
 
-    const existingOTPEmail = await Otp.findOne({
+    const existing_email_otp = await Otp.findOne({
       where: {
         email: email,
       },
     });
 
-    if (existingOTPEmail) {
+    if (existing_email_otp) {
       await Otp.destroy({
         where: {
           email: email,
@@ -59,30 +59,30 @@ const sendOtpNewPassword = async (req, res) => {
       });
     }
 
-    const generatedOTP = await generateOTP();
+    const generated_otp = await generateOTP();
 
-    const mailOptions = {
+    const mail_options = {
       from: AUTH_EMAIL,
       to: email,
       subject: "Password Reset",
       html: `<p>Password Reset</p>
-        <p style="color: tomato; font-size:25px; letter-spacing: 2px;"><b>${generatedOTP}</b></p>
+        <p style="color: tomato; font-size:25px; letter-spacing: 2px;"><b>${generated_otp}</b></p>
         <p>This code <b>expires in 1 hour(s)</b>.</p>`,
     };
 
     try {
-      const hashedOTP = await hashData(generatedOTP);
-      const createdAt = new Date();
-      const expiresAt = new Date(Date.now() + 3600000);
+      const hashed_otp = await hashData(generated_otp);
+      const created_at = new Date();
+      const expires_at = new Date(Date.now() + 3600000);
 
       await Otp.create({
         email: email,
-        otp: hashedOTP,
-        createdAt: createdAt,
-        expiresAt: expiresAt,
+        otp: hashed_otp,
+        createdAt: created_at,
+        expiresAt: expires_at,
       });
 
-      await sendMail(mailOptions);
+      await sendMail(mail_options);
 
       return res
         .status(200)
@@ -109,15 +109,15 @@ const newPassword = async (req, res) => {
   }
 
   try {
-    const matchedOTPRecord = await Otp.findOne({
+    const matched_otp_record = await Otp.findOne({
       where: {
         email: email,
       },
     });
 
-    if (!matchedOTPRecord) res.status(404).json(error("OTP Tidak Ditemukan"));
+    if (!matched_otp_record) res.status(404).json(error("OTP Tidak Ditemukan"));
 
-    const { expiresAt } = matchedOTPRecord;
+    const { expiresAt } = matched_otp_record;
 
     if (expiresAt < Date.now()) {
       await Otp.destroy({
@@ -128,13 +128,13 @@ const newPassword = async (req, res) => {
       res.status(400).json(error("OTP Telah Kadaluwarsa"));
     }
 
-    const hashedOTP = matchedOTPRecord.otp;
-    const hashPassword = await hashData(password);
-    const verifyOTP = await verifyHashedData(otp, hashedOTP);
+    const hashed_otp = matched_otp_record.otp;
+    const hash_password = await hashData(password);
+    const verify_otp = await verifyHashedData(otp, hashed_otp);
 
-    if (verifyOTP) {
+    if (verify_otp) {
       await User.update(
-        { password: hashPassword },
+        { password: hash_password },
         {
           where: {
             email: email,
@@ -148,7 +148,7 @@ const newPassword = async (req, res) => {
       });
       return res
         .status(200)
-        .json(success("Password Berhasil Diganti", verifyOTP));
+        .json(success("Password Berhasil Diganti", verify_otp));
     }
     return res.status(500).json(error("OTP Tidak Valid"));
   } catch (err) {

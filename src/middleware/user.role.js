@@ -1,8 +1,9 @@
 const { User } = require("../database/models");
-const jwt = require("jsonwebtoken");
-const { error } = require("../utils/response.js");
 
-const verifyToken = async (req, res, next) => {
+const jwt = require("jsonwebtoken");
+const { error, success } = require("../utils/response.js");
+
+const admin = async (req, res, next) => {
   const auth_header = req.headers["authorization"];
   const token = auth_header && auth_header.split(" ")[1];
 
@@ -19,15 +20,15 @@ const verifyToken = async (req, res, next) => {
       },
     });
 
-    req.email = user.email;
-    req.role = user.role;
+    if (!user) return res.status(404).json({ message: "User tidak ditemukan" });
+    if (user.role !== "admin")
+      return res.status(403).json(error("Akses Terlarang"));
     next();
   } catch (err) {
     console.log(err);
-    return res.status(50).json(error("Kesalahan Internal Server"));
   }
 };
 
 module.exports = {
-  verifyToken,
+  admin,
 };

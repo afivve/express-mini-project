@@ -5,10 +5,10 @@ dotenv.config();
 
 const TOKEN_KEY = process.env.TOKEN_KEY;
 
-const createToken = async (tokenData, tokenKey = TOKEN_KEY) => {
+const createToken = async (token_data, token_key = TOKEN_KEY) => {
   try {
-    const token = jwt.sign(tokenData, tokenKey, {
-      expiresIn: "24h",
+    const token = jwt.sign(token_data, token_key, {
+      expiresIn: "60s",
     });
     return token;
   } catch (err) {
