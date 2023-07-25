@@ -11,7 +11,7 @@ const { generateOTP } = require("../../../utils/generate.otp.js"); */
 const { AUTH_EMAIL } = process.env;
 
 const register = async (req, res) => {
-  const { name, email, password, confPassword } = req.body;
+  const { email, password, confPassword } = req.body;
 
   await Promise.all(registerValidator.map((validator) => validator.run(req)));
   const errors = validationResult(req);
@@ -41,7 +41,6 @@ const register = async (req, res) => {
 
     await User.create({
       id: user_id,
-      name: name,
       email: email,
       password: hash_password,
     });
@@ -90,9 +89,7 @@ const register = async (req, res) => {
       return res.status(500).json(error("Kesalahan Server. Gagal Membuat OTP"));
     } */
 
-    res
-      .status(201)
-      .json(success("Cek Email Untuk Verifikasi OTP", { name, email }));
+    res.status(201).json(success("Cek Email Untuk Verifikasi OTP", { email }));
   } catch (err) {
     console.log(err);
     return res.status(500).json(error("Kesalahan Server"));

@@ -1,7 +1,6 @@
 const { body } = require("express-validator");
 
 const registerValidator = [
-  body("name").notEmpty().withMessage("Nama wajib diisi"),
   body("email").notEmpty().isEmail().withMessage("Email tidak valid"),
   body("password")
     .notEmpty()

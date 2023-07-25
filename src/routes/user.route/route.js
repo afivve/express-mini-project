@@ -19,6 +19,9 @@ const {
 const { admin } = require("../../middleware/user.role.js");
 
 const { verifyToken } = require("../../middleware/verify.token.js");
+const {
+  generateRefreshToken,
+} = require("../../controllers/user.controller/token/generate.refresh.token.js");
 
 const router = express.Router();
 
@@ -27,7 +30,8 @@ router.post("/verify", verifyUser);
 router.post("/login", login);
 router.post("/sendOtpNewPassword", sendOtpNewPassword);
 router.post("/newPassword", newPassword);
-router.get("/user", verifyToken, admin, user);
+router.get("/user", verifyToken, user);
+router.get("/token", generateRefreshToken);
 
 router.delete("/logout", logout);
 

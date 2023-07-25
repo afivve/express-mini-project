@@ -36,8 +36,8 @@ const verifyUser = async (req, res) => {
       res.status(400).json(error("OTP Telah Kadaluwarsa"));
     }
 
-    const hashed_data = matched_otp_record.otp;
-    const verify_otp = await verifyHashedData(otp, hashed_data);
+    const hashed_otp = matched_otp_record.otp;
+    const verify_otp = await verifyHashedData(otp, hashed_otp);
 
     if (verify_otp) {
       await User.update(

@@ -8,7 +8,7 @@ const TOKEN_KEY = process.env.TOKEN_KEY;
 const createToken = async (token_data, token_key = TOKEN_KEY) => {
   try {
     const token = jwt.sign(token_data, token_key, {
-      expiresIn: "60s",
+      expiresIn: "100s",
     });
     return token;
   } catch (err) {

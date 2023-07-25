@@ -5,8 +5,9 @@ const { error } = require("../utils/response.js");
 const verifyToken = async (req, res, next) => {
   const auth_header = req.headers["authorization"];
   const token = auth_header && auth_header.split(" ")[1];
+  const refresh_token = req.cookies.refreshToken;
 
-  if (token == null)
+  if (!token || !refresh_token)
     return res
       .status(401)
       .json(error("Mohon login ke akun anda terlebih dahulu"));
@@ -23,8 +24,14 @@ const verifyToken = async (req, res, next) => {
     req.role = user.role;
     next();
   } catch (err) {
-    console.log(err);
-    return res.status(50).json(error("Kesalahan Internal Server"));
+    if (err instanceof jwt.TokenExpiredError) {
+      return res
+        .status(401)
+        .json(error("Mohon login ke akun anda terlebih dahulu"));
+    } else {
+      console.log(err);
+      return res.status(500).json(error("Kesalahan Internal Server"));
+    }
   }
 };
 
