@@ -15,13 +15,9 @@ const createProfile = async (req, res) => {
       },
     });
 
-    if (!user) {
-      return res.status(404).json("Pengguna tidak ditemukan");
-    }
-
     const existingProfile = await Profile.findOne({
       where: {
-        userId: user.id,
+        email: user.email,
       },
     });
 
@@ -41,7 +37,7 @@ const createProfile = async (req, res) => {
       age: age,
       city: city,
       country: country,
-      userId: user.id,
+      email: user.email,
     });
 
     return res.status(201).json(profile);

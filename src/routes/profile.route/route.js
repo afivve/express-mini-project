@@ -13,6 +13,15 @@ const {
 } = require("../../controllers/profile.controller/update.profile");
 const { verifyToken } = require("../../middleware/verify.token.js");
 const { admin } = require("../../middleware/user.role.js");
+const {
+  uploadPhoto,
+} = require("../../controllers/photo.profile.controller/upload.photo");
+const {
+  readPhoto,
+} = require("../../controllers/photo.profile.controller/read.photo");
+const {
+  deletePhoto,
+} = require("../../controllers/photo.profile.controller/delete.photo");
 
 const router = express.Router();
 
@@ -22,6 +31,10 @@ router.put("/profile", verifyToken, updateProfile);
 
 router.get("/allProfile", verifyToken, admin, readAllProfile);
 router.get("/profile/:id", verifyToken, admin, readProfileById);
+
+router.post("/photoProfile", verifyToken, uploadPhoto);
+router.get("/photoProfile", verifyToken, readPhoto);
+router.delete("/photoProfile", verifyToken, deletePhoto);
 
 router.put("/changePassword", verifyToken, changePassword);
 

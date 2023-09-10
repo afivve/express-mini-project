@@ -1,29 +1,34 @@
 const models = require("../../database/models");
 const User = models.User;
 const Profile = models.Profile;
+const PhotoProfile = models.PhotoProfile;
 
 const readProfile = async (req, res) => {
   const email = req.email;
   try {
+    if (!email) return res.status(400).json("Silahkan Login Terlebih Dahulu");
+
     const user = await User.findOne({
       where: {
         email: email,
       },
     });
 
-    if (!user) {
-      return res.status(404).json("Pengguna tidak ditemukan");
-    }
-
     const profile = await Profile.findOne({
       where: {
-        UserId: user.id,
+        email: user.email,
       },
     });
 
     if (!profile) {
       return res.status(404).json("Profil tidak ditemukan");
     }
+
+    const photo_profile = await PhotoProfile.findOne({
+      where: {
+        email: user.email,
+      },
+    });
 
     const response = {
       profile: {
@@ -38,6 +43,7 @@ const readProfile = async (req, res) => {
           city: profile.city,
           country: profile.country,
         },
+        photoProfile: photo_profile.urlPhoto,
       },
     };
 

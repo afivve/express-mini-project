@@ -5,8 +5,8 @@ const { validationResult } = require("express-validator");
 const { registerValidator } = require("../../../validation/auth.validation.js");
 const { error, success } = require("../../../utils/response.js");
 const { hashData } = require("../../../utils/hash.data.js");
-/* const { createTransporter, sendMail } = require("../../../utils/send.email.js");
-const { generateOTP } = require("../../../utils/generate.otp.js"); */
+const { createTransporter, sendMail } = require("../../../utils/send.email.js");
+const { generateOTP } = require("../../../utils/generate.otp.js");
 
 const { AUTH_EMAIL } = process.env;
 
@@ -29,7 +29,7 @@ const register = async (req, res) => {
     const hash_password = await hashData(password);
     const user_id = nanoid();
 
-    /*  try {
+    try {
       const transporter = createTransporter();
       await transporter.verify();
     } catch (err) {
@@ -37,7 +37,7 @@ const register = async (req, res) => {
       return res
         .status(500)
         .json(error("Kesalahan Internal Server. Gagal Mengirim OTP"));
-    } */
+    }
 
     await User.create({
       id: user_id,
@@ -46,7 +46,7 @@ const register = async (req, res) => {
     });
 
     /* Create OTP */
-    /* try {
+    try {
       const existing_email_otp = await Otp.findOne({
         where: {
           email: email,
@@ -87,7 +87,7 @@ const register = async (req, res) => {
     } catch (err) {
       console.log(err);
       return res.status(500).json(error("Kesalahan Server. Gagal Membuat OTP"));
-    } */
+    }
 
     res.status(201).json(success("Cek Email Untuk Verifikasi OTP", { email }));
   } catch (err) {
