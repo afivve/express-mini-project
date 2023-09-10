@@ -9,7 +9,6 @@ const {
 } = require("../../controllers/profile.controller/read.profile");
 const {
   updateProfile,
-  changePassword,
 } = require("../../controllers/profile.controller/update.profile");
 const { verifyToken } = require("../../middleware/verify.token.js");
 const { admin } = require("../../middleware/user.role.js");
@@ -22,6 +21,9 @@ const {
 const {
   deletePhoto,
 } = require("../../controllers/photo.profile.controller/delete.photo");
+const {
+  updatePhoto,
+} = require("../../controllers/photo.profile.controller/update.photo");
 
 const router = express.Router();
 
@@ -29,13 +31,12 @@ router.post("/profile", verifyToken, createProfile);
 router.get("/profile", verifyToken, readProfile);
 router.put("/profile", verifyToken, updateProfile);
 
-router.get("/allProfile", verifyToken, admin, readAllProfile);
+router.get("/all-profile", verifyToken, admin, readAllProfile);
 router.get("/profile/:id", verifyToken, admin, readProfileById);
 
-router.post("/photoProfile", verifyToken, uploadPhoto);
-router.get("/photoProfile", verifyToken, readPhoto);
-router.delete("/photoProfile", verifyToken, deletePhoto);
-
-router.put("/changePassword", verifyToken, changePassword);
+router.post("/photo-profile", verifyToken, uploadPhoto);
+router.get("/photo-profile", verifyToken, readPhoto);
+router.put("/photo-profile", verifyToken, updatePhoto);
+router.delete("/photo-profile", verifyToken, deletePhoto);
 
 module.exports = router;

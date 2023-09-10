@@ -2,28 +2,21 @@ const model = require("../../database/models");
 const User = model.User;
 const Profile = model.Profile;
 
+const { error, success } = require("../../utils/response.js");
+
 const createProfile = async (req, res) => {
   const email = req.email;
   const { name, gender, birthDate, city, country } = req.body;
 
   try {
-    if (!email) return res.status(400).json("Silahkan Login Terlebih Dahulu");
+    if (!email)
+      return res.status(401).json(error("Silahkan Login Terlebih Dahulu"));
 
     const user = await User.findOne({
       where: {
         email: email,
       },
     });
-
-    const existingProfile = await Profile.findOne({
-      where: {
-        email: user.email,
-      },
-    });
-
-    if (existingProfile) {
-      return res.status(200).json("Profile Sudah dibuat");
-    }
 
     const birth_date = new Date(birthDate);
     const current_date = new Date();
@@ -40,9 +33,12 @@ const createProfile = async (req, res) => {
       email: user.email,
     });
 
-    return res.status(201).json(profile);
+    return res
+      .status(201)
+      .json(success("Data Profil BErhasil Dibuat", profile));
   } catch (err) {
     console.log(err);
+    return res.status(500).json(error("Terjadi Kesalahan Server"));
   }
 };
 

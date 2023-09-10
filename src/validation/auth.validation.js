@@ -55,10 +55,33 @@ const newPasswordValidator = [
     }),
 ];
 
+const changePasswordValidator = [
+  body("currentPassword")
+    .notEmpty()
+    .withMessage("Password wajib diisi")
+    .isLength({ min: 8 })
+    .withMessage("Kata sandi minimal 8 karakter"),
+  body("newPassword")
+    .notEmpty()
+    .withMessage("Password wajib diisi")
+    .isLength({ min: 8 })
+    .withMessage("Kata sandi minimal 8 karakter"),
+  body("confPassword")
+    .notEmpty()
+    .withMessage("Konfirmasi password wajib diisi")
+    .custom((confPassword, { req }) => {
+      if (confPassword !== req.body.newPassword) {
+        throw new Error("Konfirmasi password dan password baru tidak cocok");
+      }
+      return true;
+    }),
+];
+
 module.exports = {
   registerValidator,
   loginValidator,
   verifyUserValidator,
   sendOtpNewPasswordValidator,
   newPasswordValidator,
+  changePasswordValidator,
 };

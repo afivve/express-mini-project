@@ -9,7 +9,7 @@ const readPhoto = async (req, res) => {
 
   try {
     if (!email)
-      return res.status(400).json(error("Silahkan Login Terlebih Dahulu"));
+      return res.status(401).json(error("Silahkan Login Terlebih Dahulu"));
 
     const user = await User.findOne({
       where: {
@@ -30,12 +30,13 @@ const readPhoto = async (req, res) => {
     const urlPhoto = photo_profile.urlPhoto;
 
     return res.status(200).json(
-      success("Berhasil Mengambil Foto Profil", {
+      success("Berhasil Mengambil Data Foto Profil", {
         urlPhoto: urlPhoto,
       })
     );
   } catch (err) {
     console.log(err);
+    return res.status(500).json(error("Terjadi Kesalahan Server"));
   }
 };
 

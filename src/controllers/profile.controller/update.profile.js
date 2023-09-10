@@ -1,14 +1,16 @@
 const model = require("../../database/models");
-const { verifyHashedData, hashData } = require("../../utils/hash.data");
 const User = model.User;
 const Profile = model.Profile;
+
+const { error, success } = require("../../utils/response.js");
 
 const updateProfile = async (req, res) => {
   const email = req.email;
   const { name, gender, birthDate, city, country } = req.body;
 
   try {
-    if (!email) return res.status(400).json("Silahkan Login Terlebih Dahulu");
+    if (!email)
+      return res.status(401).json(error("Silahkan Login Terlebih Dahulu"));
 
     const user = await User.findOne({
       where: {
@@ -35,7 +37,6 @@ const updateProfile = async (req, res) => {
     const ageInMilliseconds = current_date - birth_date;
     const age = Math.floor(ageInMilliseconds / (365.25 * 24 * 60 * 60 * 1000));
 
-    // Update data profil
     await Profile.update(
       {
         name: name,
@@ -68,57 +69,15 @@ const updateProfile = async (req, res) => {
       },
     };
 
-    return res.status(200).json(updatedProfile);
+    return res
+      .status(201)
+      .json(success("Profil Berhasil Diperbarui", updatedProfile));
   } catch (err) {
     console.log(err);
     return res.status(500).json("Terjadi kesalahan saat mengupdate profil");
   }
 };
 
-const changePassword = async (req, res) => {
-  const email = req.email;
-  const { currentPassword, newPassword } = req.body;
-  try {
-    if (!email) return res.status(400).json("Silahkan Login Terlebih Dahulu");
-
-    const user = await User.findOne({
-      where: {
-        email: email,
-      },
-    });
-
-    if (!user) {
-      return res.status(404).json("Pengguna tidak ditemukan");
-    }
-
-    const current_password = user.password;
-    const verify_current_password = await verifyHashedData(
-      currentPassword,
-      current_password
-    );
-
-    if (!verify_current_password) {
-      return res.status(200).json("Password Salah");
-    }
-
-    const hash_password = await hashData(newPassword);
-
-    await User.update(
-      { password: hash_password },
-      {
-        where: {
-          email: email,
-        },
-      }
-    );
-
-    return res.status(200).json("Password berhasil diubah");
-  } catch (err) {
-    console.log(err);
-  }
-};
-
 module.exports = {
   updateProfile,
-  changePassword,
 };

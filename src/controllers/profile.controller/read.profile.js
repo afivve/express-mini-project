@@ -6,7 +6,7 @@ const PhotoProfile = models.PhotoProfile;
 const readProfile = async (req, res) => {
   const email = req.email;
   try {
-    if (!email) return res.status(400).json("Silahkan Login Terlebih Dahulu");
+    if (!email) return res.status(401).json("Silahkan Login Terlebih Dahulu");
 
     const user = await User.findOne({
       where: {

@@ -33,7 +33,7 @@ const sendOtpNewPassword = async (req, res) => {
       return res.status(404).json(error("User tidak ditemukan"));
 
     if (!existing_user.verified)
-      return res.status(400).json(error("User belum diverifikasi"));
+      return res.status(403).json(error("User belum diverifikasi"));
 
     try {
       const transporter = createTransporter();
@@ -85,7 +85,7 @@ const sendOtpNewPassword = async (req, res) => {
       await sendMail(mail_options);
 
       return res
-        .status(200)
+        .status(201)
         .json(success("OTP telah dikirim, Cek email masuk"));
     } catch (err) {
       console.log(err);
@@ -125,7 +125,7 @@ const newPassword = async (req, res) => {
           email: email,
         },
       });
-      res.status(400).json(error("OTP Telah Kadaluwarsa"));
+      res.status(500).json(error("OTP Telah Kadaluwarsa"));
     }
 
     const hashed_otp = matched_otp_record.otp;
@@ -147,7 +147,7 @@ const newPassword = async (req, res) => {
         },
       });
       return res
-        .status(200)
+        .status(201)
         .json(success("Password Berhasil Diganti", verify_otp));
     }
     return res.status(500).json(error("OTP Tidak Valid"));

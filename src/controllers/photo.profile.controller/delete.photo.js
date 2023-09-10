@@ -11,7 +11,7 @@ const deletePhoto = async (req, res) => {
   const email = req.email;
   try {
     if (!email)
-      return res.status(400).json(error("Silahkan Login Terlebih Dahulu"));
+      return res.status(401).json(error("Silahkan Login Terlebih Dahulu"));
 
     const user = await User.findOne({
       where: {
@@ -35,9 +35,9 @@ const deletePhoto = async (req, res) => {
     if (fs.existsSync(folder_path)) {
       fs.rmdirSync(folder_path, { recursive: true });
       photo_profile.destroy();
-      return res.status(200).json(success("Foto Profil Berhasil Dihapus"));
+      return res.status(201).json(success("Foto Profil Berhasil Dihapus"));
     } else {
-      return res.status(404).json(error("Folder tidak ditemukan"));
+      return res.status(404).json(error("Foto Profil tidak ada"));
     }
   } catch (err) {
     console.log(err);
