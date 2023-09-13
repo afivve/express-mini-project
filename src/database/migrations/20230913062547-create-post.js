@@ -2,23 +2,29 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable("PhotoProfiles", {
+    await queryInterface.createTable("Posts", {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      urlPhoto: {
+      content: {
+        allowNull: true,
+        type: Sequelize.TEXT,
+      },
+      images: {
+        allowNull: true,
+        type: Sequelize.TEXT,
+      },
+      like: {
+        type: Sequelize.INTEGER,
+      },
+      userId: {
         type: Sequelize.STRING,
       },
-      profileId: {
-        type: Sequelize.INTEGER,
-        allowNull: false,
-        references: {
-          model: "Profiles",
-          key: "id",
-        },
+      email: {
+        type: Sequelize.STRING,
       },
       createdAt: {
         allowNull: false,
@@ -31,6 +37,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable("PhotoProfiles");
+    await queryInterface.dropTable("Posts");
   },
 };

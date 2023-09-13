@@ -33,13 +33,17 @@ module.exports = {
         allowNull: true,
         type: Sequelize.STRING,
       },
-      email: {
+      userId: {
         type: Sequelize.STRING,
         allowNull: false,
         references: {
           model: "Users",
-          key: "email",
+          key: "id",
         },
+      },
+      email: {
+        allowNull: false,
+        type: Sequelize.STRING,
       },
       createdAt: {
         allowNull: false,

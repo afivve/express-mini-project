@@ -3,10 +3,13 @@ const User = models.User;
 const Profile = models.Profile;
 const PhotoProfile = models.PhotoProfile;
 
+const { error, success } = require("../../utils/response.js");
+
 const readProfile = async (req, res) => {
   const email = req.email;
   try {
-    if (!email) return res.status(401).json("Silahkan Login Terlebih Dahulu");
+    if (!email)
+      return res.status(401).json(error("Silahkan Login Terlebih Dahulu"));
 
     const user = await User.findOne({
       where: {
@@ -21,7 +24,7 @@ const readProfile = async (req, res) => {
     });
 
     if (!profile) {
-      return res.status(404).json("Profil tidak ditemukan");
+      return res.status(404).json(error("Profil tidak ditemukan"));
     }
 
     const photo_profile = await PhotoProfile.findOne({
@@ -30,7 +33,7 @@ const readProfile = async (req, res) => {
       },
     });
 
-    const response = {
+    const data = {
       profile: {
         id: user.id,
         email: user.email,
@@ -43,14 +46,18 @@ const readProfile = async (req, res) => {
           city: profile.city,
           country: profile.country,
         },
-        photoProfile: photo_profile.urlPhoto,
+        photoProfile: photo_profile
+          ? photo_profile.urlPhoto
+          : "src/public/default/default.png",
       },
     };
 
-    return res.status(200).json(response);
+    return res
+      .status(200)
+      .json(success("Berhasil Mendapatkan Data Profile", data));
   } catch (err) {
     console.log(err);
-    return res.status(500).json("Gagal membaca profil");
+    return res.status(500).json(error("Gagal membaca profil"));
   }
 };
 

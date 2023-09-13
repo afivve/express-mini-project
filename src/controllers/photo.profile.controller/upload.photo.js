@@ -89,6 +89,7 @@ const uploadPhoto = async (req, res) => {
 
         await PhotoProfile.create({
           urlPhoto: url_photo,
+          userId: user.id,
           email: user.email,
         });
 
