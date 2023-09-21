@@ -74,6 +74,44 @@ const uploadPhoto = async (req, res) => {
       },
     });
 
+    if (existing_photo_profile) {
+      fs.unlink(existing_photo_profile.urlPhoto, (unlinkErr) => {
+        if (unlinkErr) {
+          console.log(unlinkErr);
+          return res.status(500).json(error("Gagal Update Foto Profil"));
+        }
+
+        const singleUpload = upload.single("photo");
+        singleUpload(req, res, async (err) => {
+          if (err) {
+            console.log(err);
+            return res.status(400).json(error(err.message));
+          }
+
+          if (!req.file) {
+            return res.status(400).json("Mohon unggah file foto");
+          }
+
+          const url_photo = req.file.path;
+
+          await PhotoProfile.update(
+            {
+              urlPhoto: url_photo,
+            },
+            {
+              where: {
+                email: user.email,
+              },
+            }
+          );
+
+          res
+            .status(201)
+            .json(success("Foto berhasil diperbarui", { urlPhoto: url_photo }));
+        });
+      });
+    }
+
     if (!existing_photo_profile) {
       const singleUpload = upload.single("photo");
       singleUpload(req, res, async (err) => {
@@ -89,7 +127,7 @@ const uploadPhoto = async (req, res) => {
 
         await PhotoProfile.create({
           urlPhoto: url_photo,
-          userId: user.id,
+          uuid: user.uuid,
           email: user.email,
         });
 

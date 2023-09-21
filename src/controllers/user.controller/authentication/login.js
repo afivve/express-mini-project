@@ -24,7 +24,7 @@ const login = async (req, res) => {
 
     if (!user) return res.status(404).json(error("Email tidak ditemukan"));
 
-    const { id, email, verified, role } = user;
+    const { id, uuid, email, verified, role } = user;
 
     if (verified === false)
       return res.status(400).json(error("Akun belum terverifikasi"));
@@ -57,6 +57,7 @@ const login = async (req, res) => {
     return res.status(200).json(
       success("Login Berhasil", {
         id: id,
+        uuid: uuid,
         email: email,
         token: token,
       })

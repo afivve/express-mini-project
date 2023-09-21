@@ -36,6 +36,7 @@ const readProfile = async (req, res) => {
     const data = {
       profile: {
         id: user.id,
+        uuid: user.uuid,
         email: user.email,
         name: profile.name,
         role: user.role,
@@ -67,11 +68,11 @@ const readAllProfile = async (req, res) => {
 };
 
 const readProfileById = async (req, res) => {
-  const { id } = req.params;
+  const { uuid } = req.params;
 
   const profile = await Profile.findOne({
     where: {
-      userId: id,
+      uuid: uuid,
     },
   });
 

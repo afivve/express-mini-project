@@ -39,7 +39,7 @@ const createProfile = async (req, res) => {
       age: age,
       city: city,
       country: country,
-      userId: user.id,
+      uuid: user.uuid,
       email: user.email,
     });
 

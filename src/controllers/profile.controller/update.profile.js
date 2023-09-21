@@ -24,7 +24,7 @@ const updateProfile = async (req, res) => {
 
     const profile = await Profile.findOne({
       where: {
-        userId: user.id,
+        uuid: user.uuid,
       },
     });
 
@@ -48,14 +48,14 @@ const updateProfile = async (req, res) => {
       },
       {
         where: {
-          userId: user.id,
+          uuid: user.uuid,
         },
       }
     );
 
     const updatedProfile = {
       profile: {
-        id: user.id,
+        id: user.uuid,
         email: user.email,
         name: profile.name,
         role: user.role,
