@@ -64,7 +64,7 @@ const sendVerificationEmail = async (email) => {
       to: email,
       subject: "Verifikasi OTP",
       html: `<p>Verifikasi OTP</p>
-        <p style="color: tomato; font-size:25px; letter-spacing: 2px;"><b>${generatedOTP}</b></p>
+        <p style="color: tomato; font-size:25px; letter-spacing: 2px;"><b>${generated_OTP}</b></p>
         <p>This code <b>expires in 1 hour(s)</b>.</p>`,
     };
 
