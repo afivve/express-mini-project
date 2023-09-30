@@ -106,27 +106,4 @@ describe("POST /register", () => {
         done();
       });
   });
-
-  /*   it("should return a 409 status code if user already registered", (done) => {
-    // Cari data pengguna dengan email tertentu sebelum menjalankan pengujian
-    User.findOne({ where: { email: "emaa@mail.com" } }).then((existingUser) => {
-      if (existingUser) {
-        // Jika pengguna sudah ada, jalankan pengujian
-        chai
-          .request(app)
-          .post("/register")
-          .send({
-            email: "emaa@mail.com",
-            password: "password123",
-            confPassword: "password123",
-          })
-          .end((err, res) => {
-            res.should.have.status(409);
-            res.body.should.be.a("object");
-            res.body.should.have.property("error", true);
-            done();
-          });
-      }
-    });
-  }); */
 });

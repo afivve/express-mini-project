@@ -13,45 +13,37 @@ const { AUTH_EMAIL } = process.env;
 
 const sendOtpNewPassword = async (req, res) => {
   const { email } = req.body;
+
   await Promise.all(
     sendOtpNewPasswordValidator.map((validator) => validator.run(req))
   );
   const errors = validationResult(req);
+
   if (!errors.isEmpty()) {
     const errorMessages = errors.array().map((error) => error.msg);
     return res.status(400).json(error(errorMessages.join(", ")));
   }
 
   try {
-    const existing_user = await User.findOne({
+    const existingUser = await User.findOne({
       where: {
         email: email,
       },
     });
 
-    if (!existing_user)
+    if (!existingUser)
       return res.status(404).json(error("User tidak ditemukan"));
 
-    if (!existing_user.verified)
-      return res.status(403).json(error("User belum diverifikasi"));
+    const transporter = createTransporter();
+    await transporter.verify();
 
-    try {
-      const transporter = createTransporter();
-      await transporter.verify();
-    } catch (err) {
-      console.log("Error verifikasi transporter:", err);
-      return res
-        .status(500)
-        .json(error("Kesalahan Internal Server. Gagal Mengirim OTP"));
-    }
-
-    const existing_email_otp = await Otp.findOne({
+    const existingEmailOTP = await Otp.findOne({
       where: {
         email: email,
       },
     });
 
-    if (existing_email_otp) {
+    if (existingEmailOTP) {
       await Otp.destroy({
         where: {
           email: email,
@@ -59,65 +51,60 @@ const sendOtpNewPassword = async (req, res) => {
       });
     }
 
-    const generated_otp = await generateOTP();
+    const generatedOTP = await generateOTP();
 
-    const mail_options = {
+    const mailOptions = {
       from: AUTH_EMAIL,
       to: email,
       subject: "Password Reset",
       html: `<p>Password Reset</p>
-        <p style="color: tomato; font-size:25px; letter-spacing: 2px;"><b>${generated_otp}</b></p>
+        <p style="color: tomato; font-size:25px; letter-spacing: 2px;"><b>${generatedOTP}</b></p>
         <p>This code <b>expires in 1 hour(s)</b>.</p>`,
     };
 
-    try {
-      const hashed_otp = await hashData(generated_otp);
-      const created_at = new Date();
-      const expires_at = new Date(Date.now() + 3600000);
+    const hashedOTP = await hashData(generatedOTP);
+    const createdAt = new Date();
+    const expiresAt = new Date(Date.now() + 3600000);
 
-      await Otp.create({
-        email: email,
-        otp: hashed_otp,
-        createdAt: created_at,
-        expiresAt: expires_at,
-      });
+    await Otp.create({
+      email: email,
+      otp: hashedOTP,
+      createdAt: createdAt,
+      expiresAt: expiresAt,
+    });
 
-      await sendMail(mail_options);
+    await sendMail(mailOptions);
 
-      return res
-        .status(201)
-        .json(success("OTP telah dikirim, Cek email masuk"));
-    } catch (err) {
-      console.log(err);
-      return res.status(500).json(error("Kesalahan Internal Server"));
-    }
+    return res.status(201).json(success("OTP telah dikirim, Cek email masuk"));
   } catch (err) {
-    console.log(err);
+    console.error(err);
     return res.status(500).json(error("Kesalahan Internal Server"));
   }
 };
 
 const newPassword = async (req, res) => {
   const { email, otp, password, confPassword } = req.body;
+
   await Promise.all(
     newPasswordValidator.map((validator) => validator.run(req))
   );
   const errors = validationResult(req);
+
   if (!errors.isEmpty()) {
     const errorMessages = errors.array().map((error) => error.msg);
     return res.status(400).json(error(errorMessages.join(", ")));
   }
 
   try {
-    const matched_otp_record = await Otp.findOne({
+    const matchedOTPRecord = await Otp.findOne({
       where: {
         email: email,
       },
     });
 
-    if (!matched_otp_record) res.status(404).json(error("OTP Tidak Ditemukan"));
+    if (!matchedOTPRecord) res.status(404).json(error("OTP Tidak Ditemukan"));
 
-    const { expiresAt } = matched_otp_record;
+    const { expiresAt } = matchedOTPRecord;
 
     if (expiresAt < Date.now()) {
       await Otp.destroy({
@@ -128,13 +115,13 @@ const newPassword = async (req, res) => {
       res.status(500).json(error("OTP Telah Kadaluwarsa"));
     }
 
-    const hashed_otp = matched_otp_record.otp;
-    const hash_password = await hashData(password);
-    const verify_otp = await verifyHashedData(otp, hashed_otp);
+    const hashedOTP = matchedOTPRecord.otp;
+    const hashPassword = await hashData(password);
+    const verifyOTP = await verifyHashedData(otp, hashedOTP);
 
-    if (verify_otp) {
+    if (verifyOTP) {
       await User.update(
-        { password: hash_password },
+        { password: hashPassword },
         {
           where: {
             email: email,
@@ -148,11 +135,11 @@ const newPassword = async (req, res) => {
       });
       return res
         .status(201)
-        .json(success("Password Berhasil Diganti", verify_otp));
+        .json(success("Password Berhasil Diganti", verifyOTP));
     }
     return res.status(500).json(error("OTP Tidak Valid"));
   } catch (err) {
-    console.log(err);
+    console.error(err);
     return res.status(500).json(error("Kesalahan Internal Server"));
   }
 };
