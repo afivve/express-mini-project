@@ -29,13 +29,15 @@ const updateProfile = async (req, res) => {
     });
 
     if (!profile) {
-      return res.status(404).json("Profil tidak ditemukan");
+      return res.status(404).json("Data Profil belum dibuat");
     }
 
     const birth_date = new Date(birthDate);
     const current_date = new Date();
-    const ageInMilliseconds = current_date - birth_date;
-    const age = Math.floor(ageInMilliseconds / (365.25 * 24 * 60 * 60 * 1000));
+    const age_in_milliseconds = current_date - birth_date;
+    const age = Math.floor(
+      age_in_milliseconds / (365.25 * 24 * 60 * 60 * 1000)
+    );
 
     await Profile.update(
       {

@@ -23,15 +23,6 @@ const createProfile = async (req, res) => {
     const ageInMilliseconds = current_date - birth_date;
     const age = Math.floor(ageInMilliseconds / (365.25 * 24 * 60 * 60 * 1000));
 
-    const existing_profile = await Profile.findOne({
-      where: {
-        email: user.email,
-      },
-    });
-
-    if (existing_profile)
-      return res.status(400).json(error("Profile Sudah Dibuat"));
-
     const profile = await Profile.create({
       name: name,
       gender: gender,
