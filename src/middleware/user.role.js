@@ -1,7 +1,7 @@
 const { User } = require("../database/models");
 
 const jwt = require("jsonwebtoken");
-const { error, success } = require("../utils/response.js");
+const { error } = require("../utils/response.js");
 
 const admin = async (req, res, next) => {
   const auth_header = req.headers["authorization"];

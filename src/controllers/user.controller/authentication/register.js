@@ -37,7 +37,7 @@ const register = async (req, res) => {
       password: hashed_password,
     });
 
-    await sendVerificationEmail(email);
+    // await sendVerificationEmail(email);
 
     res.status(201).json(success("Cek Email Untuk Verifikasi OTP", { email }));
   } catch (err) {
