@@ -8,20 +8,20 @@ const PhotoProfile = models.PhotoProfile;
 const { error, success } = require("../../utils/response.js");
 
 const deletePhoto = async (req, res) => {
-  const email = req.email;
+  const uuid = req.uuid;
   try {
-    if (!email)
+    if (!uuid)
       return res.status(401).json(error("Silahkan Login Terlebih Dahulu"));
 
     const user = await User.findOne({
       where: {
-        email: email,
+        uuid: uuid,
       },
     });
 
     const photo_profile = await PhotoProfile.findOne({
       where: {
-        email: user.email,
+        userId: user.id,
       },
     });
 
@@ -29,8 +29,8 @@ const deletePhoto = async (req, res) => {
       return res.status(404).json(error("Foto Profil Tidak Ada"));
     }
 
-    const folder_name = req.email;
-    const folder_path = `src/public/uploads/profile/${folder_name}`;
+    const folder_name = user.email;
+    const folder_path = `public/uploads/photo.profile/${folder_name}`;
 
     if (fs.existsSync(folder_path)) {
       fs.rmdirSync(folder_path, { recursive: true });

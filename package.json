@@ -7,7 +7,7 @@
   "scripts": {
     "start": "node index.js",
     "dev": "set NODE_ENV=development&&nodemon index.js",
-    "test": "set NODE_ENV=test&& mocha --recursive --reporter mochawesome --reporter-options reportDir=test,reportFilename=report --timeout 20000 --exit"
+    "test": "set NODE_ENV=test&& mocha --recursive --timeout 20000 --exit"
   },
   "keywords": [],
   "author": "",

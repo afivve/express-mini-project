@@ -1,61 +1,71 @@
-const models = require("../../database/models");
-const User = models.User;
-const Profile = models.Profile;
-const PhotoProfile = models.PhotoProfile;
+const { User, Profile, PhotoProfile } = require("../../database/models");
 
 const { error, success } = require("../../utils/response.js");
 
 const readProfile = async (req, res) => {
-  const email = req.email;
+  const uuid = req.uuid;
+
   try {
-    if (!email)
-      return res.status(401).json(error("Silahkan Login Terlebih Dahulu"));
-
     const user = await User.findOne({
-      where: {
-        email: email,
-      },
+      where: { uuid: uuid },
+      include: [
+        { model: Profile, as: "profile" },
+        { model: PhotoProfile, as: "photoProfile" },
+      ],
     });
-
-    const profile = await Profile.findOne({
-      where: {
-        email: user.email,
-      },
-    });
-
-    if (!profile) {
-      return res.status(404).json(error("Profil tidak ditemukan"));
-    }
 
     const photo_profile = await PhotoProfile.findOne({
       where: {
-        email: user.email,
+        userId: user.id,
       },
     });
 
-    const data = {
-      profile: {
-        id: user.id,
-        uuid: user.uuid,
-        email: user.email,
-        name: profile.name,
-        role: user.role,
-        gender: profile.gender,
-        birthDate: profile.birthDate,
-        age: profile.age,
-        address: {
-          city: profile.city,
-          country: profile.country,
-        },
-        photoProfile: photo_profile
-          ? photo_profile.urlPhoto
-          : "src/public/default/default.png",
+    const response = {
+      uuid: user.uuid,
+      email: user.email,
+      name: user.profile.name ?? "",
+      gender: user.profile.gender ?? "",
+      birthDate: user.profile.birthDate ?? "",
+      age: user.profile.age ?? "",
+      address: {
+        city: user.profile.city ?? "",
+        country: user.profile.country ?? "",
       },
+      photoProfile: photo_profile
+        ? photo_profile.urlPhoto
+        : "public/default/default.png",
+      role: user.role,
     };
 
     return res
       .status(200)
-      .json(success("Berhasil Mendapatkan Data Profile", data));
+      .json(success("Berhasil Mendapatkan Data Profile", response));
+
+    /* const photo_profile = await PhotoProfile.findOne({
+      where: {
+        email: user.email,
+      },
+    }); */
+
+    // const data = {
+    //   profile: {
+    //     id: profile.id,
+    //     uuid: profile.uuid,
+    //     email: profile.email,
+    //     name: profile.name,
+    //     role: profile.users.role,
+    //     gender: profile.profile.gender,
+    //     birthDate: profile.profile.birthDate,
+    //     age: profile.profile.age,
+    //     address: {
+    //       city: profile.profile.city,
+    //       country: profile.profile.country,
+    //     },
+    //     /* photoProfile: photo_profile
+    //       ? photo_profile.urlPhoto
+    //       : "src/public/default/default.png", */
+    //   },
+    // };
   } catch (err) {
     console.log(err);
     return res.status(500).json(error("Gagal membaca profil"));

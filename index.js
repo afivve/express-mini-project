@@ -15,6 +15,14 @@ app.use(bodyParser.json());
 app.use(cookieParser());
 app.use(express.json());
 
+// create a write stream (in append mode)
+/* const accessLogStream = fs.createWriteStream(
+  path.join(__dirname, "access.log"),
+  { flags: "a" }
+); */
+// setup the logger
+/* app.use(morgan("tiny")); */
+
 app.use(Route);
 
 const PORT = process.env.PORT;

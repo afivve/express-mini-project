@@ -1,35 +1,29 @@
-const model = require("../../database/models");
-const User = model.User;
-const Profile = model.Profile;
+const { User, Profile } = require("../../database/models");
 
 const { error, success } = require("../../utils/response.js");
 
 const updateProfile = async (req, res) => {
-  const email = req.email;
+  const uuid = req.uuid;
   const { name, gender, birthDate, city, country } = req.body;
 
   try {
-    if (!email)
+    if (!uuid)
       return res.status(401).json(error("Silahkan Login Terlebih Dahulu"));
 
     const user = await User.findOne({
       where: {
-        email: email,
+        uuid: uuid,
       },
     });
 
-    if (!user) {
-      return res.status(404).json("Pengguna tidak ditemukan");
-    }
-
     const profile = await Profile.findOne({
       where: {
-        uuid: user.uuid,
+        userId: user.id,
       },
     });
 
     if (!profile) {
-      return res.status(404).json("Data Profil belum dibuat");
+      return res.status(404).json("Gagal Update. Data Profil belum dibuat");
     }
 
     const birth_date = new Date(birthDate);
@@ -50,30 +44,28 @@ const updateProfile = async (req, res) => {
       },
       {
         where: {
-          uuid: user.uuid,
+          userId: user.id,
         },
       }
     );
 
-    const updatedProfile = {
-      profile: {
-        id: user.uuid,
-        email: user.email,
-        name: profile.name,
-        role: user.role,
-        gender: profile.gender,
-        birthDate: profile.birthDate,
-        age: profile.age,
-        address: {
-          city: profile.city,
-          country: profile.country,
-        },
+    const response = {
+      uuid: user.uuid,
+      email: user.email,
+      name: name,
+      gender: gender,
+      birthDate: birthDate,
+      age: age,
+      address: {
+        city: city,
+        country: country,
       },
+      role: user.role,
     };
 
     return res
       .status(201)
-      .json(success("Profil Berhasil Diperbarui", updatedProfile));
+      .json(success("Profil Berhasil Diperbarui", response));
   } catch (err) {
     console.log(err);
     return res.status(500).json("Terjadi kesalahan saat mengupdate profil");

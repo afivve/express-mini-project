@@ -51,7 +51,7 @@ const upload = multer({
   },
 });
 
-const uploadPhoto = async (req, res) => {
+const updatePhoto = async (req, res) => {
   const uuid = req.uuid;
 
   try {
@@ -70,30 +70,44 @@ const uploadPhoto = async (req, res) => {
       },
     });
 
-    if (existing_photo_profile)
+    if (!existing_photo_profile)
       return res.status(500).json(error("Photo Profile Sudah Diupload"));
 
-    if (!existing_photo_profile) {
-      const singleUpload = upload.single("photo");
-      singleUpload(req, res, async (err) => {
-        if (err) {
-          console.log(err);
-          return res.status(400).json(error(err.message));
+    if (existing_photo_profile) {
+      fs.unlink(existing_photo_profile.urlPhoto, (unlinkErr) => {
+        if (unlinkErr) {
+          console.log(unlinkErr);
+          return res.status(500).json(error("Gagal Update Foto Profil"));
         }
 
-        if (!req.file) {
-          return res.status(400).json("Mohon unggah file foto");
-        }
-        const url_photo = req.file.path;
+        const singleUpload = upload.single("photo");
+        singleUpload(req, res, async (err) => {
+          if (err) {
+            console.log(err);
+            return res.status(400).json(error(err.message));
+          }
 
-        await PhotoProfile.create({
-          urlPhoto: url_photo,
-          userId: user.id,
+          if (!req.file) {
+            return res.status(400).json("Mohon unggah file foto");
+          }
+
+          const url_photo = req.file.path;
+
+          await PhotoProfile.update(
+            {
+              urlPhoto: url_photo,
+            },
+            {
+              where: {
+                userId: user.id,
+              },
+            }
+          );
+
+          res
+            .status(201)
+            .json(success("Foto berhasil diperbarui", { urlPhoto: url_photo }));
         });
-
-        res
-          .status(201)
-          .json(success("Foto berhasil diupload", { urlPhoto: url_photo }));
       });
     }
   } catch (err) {
@@ -103,5 +117,5 @@ const uploadPhoto = async (req, res) => {
 };
 
 module.exports = {
-  uploadPhoto,
+  updatePhoto,
 };

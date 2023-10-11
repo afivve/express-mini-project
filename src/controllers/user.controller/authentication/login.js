@@ -36,7 +36,7 @@ const login = async (req, res) => {
     );
     if (!password_match) return res.status(403).json(error("Password Salah"));
 
-    const token_data = { id, email, role };
+    const token_data = { id, uuid, email, role };
     const token = await createToken(token_data);
     const refresh_token = await refreshToken(token_data);
 

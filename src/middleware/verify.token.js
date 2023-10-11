@@ -16,11 +16,12 @@ const verifyToken = async (req, res, next) => {
     const decoded = jwt.verify(token, process.env.TOKEN_KEY);
     const user = await User.findOne({
       where: {
-        email: decoded.email,
+        uuid: decoded.uuid,
       },
     });
 
     req.email = user.email;
+    req.uuid = user.uuid;
     req.role = user.role;
     next();
   } catch (err) {

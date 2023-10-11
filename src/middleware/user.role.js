@@ -16,7 +16,7 @@ const admin = async (req, res, next) => {
     const decoded = jwt.verify(token, process.env.TOKEN_KEY);
     const user = await User.findOne({
       where: {
-        email: decoded.email,
+        uuid: decoded.uuid,
       },
     });
 

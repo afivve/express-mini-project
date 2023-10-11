@@ -19,11 +19,16 @@ const generateRefreshToken = async (req, res) => {
       if (err)
         return res.status(401).json(error("Silahkan Login Terlebih Dahulu"));
       const userId = user[0].id;
+      const uuid = user[0].uuid;
       const email = user[0].email;
       const role = user[0].role;
-      const token = jwt.sign({ userId, email, role }, process.env.TOKEN_KEY, {
-        expiresIn: "1d",
-      });
+      const token = jwt.sign(
+        { userId, uuid, email, role },
+        process.env.TOKEN_KEY,
+        {
+          expiresIn: "1d",
+        }
+      );
       res
         .status(201)
         .json(
