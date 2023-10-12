@@ -3,10 +3,10 @@ const { error, success } = require("../../../utils/response.js");
 const { createTransporter, sendMail } = require("../../../utils/send.email.js");
 const { generateOTP } = require("../../../utils/generate.otp.js");
 const { hashData, verifyHashedData } = require("../../../utils/hash.data.js");
-const {
-  newPasswordValidator,
-  sendOtpNewPasswordValidator,
-} = require("../../../validation/auth.validation.js");
+// const {
+//   newPasswordValidator,
+//   sendOtpNewPasswordValidator,
+// } = require("../../../validation/auth.validation.js");
 const { validationResult } = require("express-validator");
 
 const { AUTH_EMAIL } = process.env;
@@ -14,15 +14,15 @@ const { AUTH_EMAIL } = process.env;
 const sendOtpNewPassword = async (req, res) => {
   const { email } = req.body;
 
-  await Promise.all(
-    sendOtpNewPasswordValidator.map((validator) => validator.run(req))
-  );
-  const errors = validationResult(req);
+  // await Promise.all(
+  //   sendOtpNewPasswordValidator.map((validator) => validator.run(req))
+  // );
+  // const errors = validationResult(req);
 
-  if (!errors.isEmpty()) {
-    const errorMessages = errors.array().map((error) => error.msg);
-    return res.status(400).json(error(errorMessages.join(", ")));
-  }
+  // if (!errors.isEmpty()) {
+  //   const errorMessages = errors.array().map((error) => error.msg);
+  //   return res.status(400).json(error(errorMessages.join(", ")));
+  // }
 
   try {
     const existingUser = await User.findOne({

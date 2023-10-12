@@ -3,17 +3,17 @@ const { User } = require("../../../database/models");
 const { error, success } = require("../../../utils/response.js");
 const { verifyHashedData } = require("../../../utils/hash.data.js");
 const { createToken } = require("../../../utils/create.token.js");
-const { loginValidator } = require("../../../validation/auth.validation.js");
-const { validationResult } = require("express-validator");
+// const { loginValidator } = require("../../../utils/validation/auth.validation.js");
+// const { validationResult } = require("express-validator");
 const { refreshToken } = require("../../../utils/refresh.token.js");
 
 const login = async (req, res) => {
-  await Promise.all(loginValidator.map((validator) => validator.run(req)));
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    const error_messages = errors.array().map((error) => error.msg);
-    return res.status(400).json(error(error_messages.join(", ")));
-  }
+  // await Promise.all(loginValidator.map((validator) => validator.run(req)));
+  // const errors = validationResult(req);
+  // if (!errors.isEmpty()) {
+  //   const error_messages = errors.array().map((error) => error.msg);
+  //   return res.status(400).json(error(error_messages.join(", ")));
+  // }
 
   try {
     const user = await User.findOne({

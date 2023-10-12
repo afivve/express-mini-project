@@ -1,7 +1,7 @@
 const { User, Otp } = require("../../../database/models");
 const { nanoid } = require("nanoid");
-const { validationResult } = require("express-validator");
-const { registerValidator } = require("../../../validation/auth.validation.js");
+// const { validationResult } = require("express-validator");
+// const { registerValidator } = require("../../../validation/auth.validation.js");
 const { error, success } = require("../../../utils/response.js");
 const { hashData } = require("../../../utils/hash.data.js");
 const { createTransporter, sendMail } = require("../../../utils/send.email.js");
@@ -12,13 +12,13 @@ const { AUTH_EMAIL } = process.env;
 const register = async (req, res) => {
   const { email, password } = req.body;
 
-  await Promise.all(registerValidator.map((validator) => validator.run(req)));
-  const validation_errors = validationResult(req);
+  // await Promise.all(registerValidator.map((validator) => validator.run(req)));
+  // const validation_errors = validationResult(req);
 
-  if (!validation_errors.isEmpty()) {
-    const error_messages = validation_errors.array().map((error) => error.msg);
-    return res.status(400).json(error(error_messages.join(", ")));
-  }
+  // if (!validation_errors.isEmpty()) {
+  //   const error_messages = validation_errors.array().map((error) => error.msg);
+  //   return res.status(400).json(error(error_messages.join(", ")));
+  // }
 
   try {
     const existing_user = await User.findOne({ where: { email } });

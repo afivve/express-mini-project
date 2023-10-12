@@ -5,18 +5,11 @@ const {
   sendOtpNewPassword,
 } = require("../../controllers/user.controller/authentication/forgot.password.js");
 const {
-  login,
-} = require("../../controllers/user.controller/authentication/login.js");
-const {
   logout,
 } = require("../../controllers/user.controller/authentication/logout.js");
 const {
-  register,
-} = require("../../controllers/user.controller/authentication/register.js");
-const {
   verifyUser,
 } = require("../../controllers/user.controller/authentication/verify.user.js");
-
 const { verifyToken } = require("../../middleware/verify.token.js");
 const {
   generateRefreshToken,
@@ -25,11 +18,14 @@ const {
   changePassword,
 } = require("../../controllers/user.controller/authentication/change.password.js");
 
+const AuthController = require("../../controllers/auth.controller");
+const Validation = require("../../utils/validation/auth.validation.js");
+
 const router = express.Router();
 
-router.post("/register", register);
+router.post("/register", Validation.register, AuthController.register);
+router.post("/login", Validation.login, AuthController.login);
 router.post("/verify", verifyUser);
-router.post("/login", login);
 router.post("/send-otp-new-password", sendOtpNewPassword);
 router.post("/new-password", newPassword);
 router.get("/user", verifyToken, user);

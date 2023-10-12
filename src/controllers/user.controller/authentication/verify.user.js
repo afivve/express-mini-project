@@ -2,19 +2,19 @@ const { User, Otp } = require("../../../database/models");
 
 const { verifyHashedData } = require("../../../utils/hash.data.js");
 const { error, success } = require("../../../utils/response.js");
-const {
-  verifyUserValidator,
-} = require("../../../validation/auth.validation.js");
-const { validationResult } = require("express-validator");
+// const {
+//   verifyUserValidator,
+// } = require("../../../validation/auth.validation.js");
+// const { validationResult } = require("express-validator");
 
 const verifyUser = async (req, res) => {
   const { email, otp } = req.body;
-  await Promise.all(verifyUserValidator.map((validator) => validator.run(req)));
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    const errorMessages = errors.array().map((error) => error.msg);
-    return res.status(400).json(error(errorMessages.join(", ")));
-  }
+  // await Promise.all(verifyUserValidator.map((validator) => validator.run(req)));
+  // const errors = validationResult(req);
+  // if (!errors.isEmpty()) {
+  //   const errorMessages = errors.array().map((error) => error.msg);
+  //   return res.status(400).json(error(errorMessages.join(", ")));
+  // }
 
   try {
     const matched_otp_record = await Otp.findOne({

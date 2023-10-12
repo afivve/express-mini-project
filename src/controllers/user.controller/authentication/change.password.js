@@ -1,7 +1,7 @@
 const { verifyHashedData, hashData } = require("../../../utils/hash.data");
-const {
-  changePasswordValidator,
-} = require("../../../validation/auth.validation.js");
+// const {
+//   changePasswordValidator,
+// } = require("../../../validation/auth.validation.js");
 const { error, success } = require("../../../utils/response.js");
 
 const model = require("../../../database/models");
@@ -9,16 +9,16 @@ const User = model.User;
 
 const changePassword = async (req, res) => {
   const email = req.email;
-  const { currentPassword, newPassword, confPassword } = req.body;
+  // const { currentPassword, newPassword, confPassword } = req.body;
 
-  await Promise.all(
-    changePasswordValidator.map((validator) => validator.run(req))
-  );
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    const errorMessages = errors.array().map((error) => error.msg);
-    return res.status(400).json(error(errorMessages.join(", ")));
-  }
+  // await Promise.all(
+  //   changePasswordValidator.map((validator) => validator.run(req))
+  // );
+  // const errors = validationResult(req);
+  // if (!errors.isEmpty()) {
+  //   const errorMessages = errors.array().map((error) => error.msg);
+  //   return res.status(400).json(error(errorMessages.join(", ")));
+  // }
 
   try {
     if (!email)
