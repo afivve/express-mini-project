@@ -19,12 +19,11 @@ const {
 } = require("../../controllers/user.controller/authentication/change.password.js");
 
 const AuthController = require("../../controllers/auth.controller");
-const Validation = require("../../utils/validation/auth.validation.js");
 
 const router = express.Router();
 
-router.post("/register", Validation.register, AuthController.register);
-router.post("/login", Validation.login, AuthController.login);
+router.post("/register", AuthController.register);
+router.post("/login", AuthController.login);
 router.post("/verify", verifyUser);
 router.post("/send-otp-new-password", sendOtpNewPassword);
 router.post("/new-password", newPassword);

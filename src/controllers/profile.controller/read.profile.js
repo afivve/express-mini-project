@@ -1,6 +1,5 @@
 const { User, Profile, PhotoProfile } = require("../../database/models");
-
-const { error, success } = require("../../utils/response.js");
+const apiResponse = require("../../utils/response.js");
 
 const readProfile = async (req, res) => {
   const uuid = req.uuid;
@@ -39,7 +38,7 @@ const readProfile = async (req, res) => {
 
     return res
       .status(200)
-      .json(success("Berhasil Mendapatkan Data Profile", response));
+      .json(apiResponse.success("Berhasil Mendapatkan Data Profile", response));
 
     /* const photo_profile = await PhotoProfile.findOne({
       where: {
@@ -68,29 +67,8 @@ const readProfile = async (req, res) => {
     // };
   } catch (err) {
     console.log(err);
-    return res.status(500).json(error("Gagal membaca profil"));
+    return res.status(500).json(apiResponse.error("Gagal membaca profil"));
   }
 };
 
-const readAllProfile = async (req, res) => {
-  const profiles = await Profile.findAll();
-  res.status(200).json(profiles);
-};
-
-const readProfileById = async (req, res) => {
-  const { uuid } = req.params;
-
-  const profile = await Profile.findOne({
-    where: {
-      uuid: uuid,
-    },
-  });
-
-  res.status(200).json(profile);
-};
-
-module.exports = {
-  readProfile,
-  readAllProfile,
-  readProfileById,
-};
+module.export = readProfile;

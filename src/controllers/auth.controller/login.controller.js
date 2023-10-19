@@ -1,7 +1,8 @@
-const { User } = require("../../../database/models");
-const hashData = require("../../../utils/hash.data");
-const jwt = require("../../../utils/token.utils");
-const { error, success } = require("../../../utils/response.js");
+const { User } = require("../../database/models");
+const hashData = require("../../utils/hash.data");
+const jwt = require("../../utils/token.utils");
+
+const apiResponse = require("../../utils/response.js");
 
 const login = async (req, res) => {
   try {
@@ -11,19 +12,23 @@ const login = async (req, res) => {
       },
     });
 
-    if (!user) return res.status(404).json(error("Email tidak ditemukan"));
+    if (!user)
+      return res.status(404).json(apiResponse.error("Email tidak ditemukan"));
 
     const { id, uuid, email, verified, role } = user;
 
     if (verified === false)
-      return res.status(400).json(error("Akun belum terverifikasi"));
+      return res
+        .status(400)
+        .json(apiResponse.error("Akun belum terverifikasi"));
 
     const hashed_password = user.password;
     const password_match = await hashData.verify(
       req.body.password,
       hashed_password
     );
-    if (!password_match) return res.status(403).json(error("Password Salah"));
+    if (!password_match)
+      return res.status(403).json(apiResponse.error("Password Salah"));
 
     const token_data = { id, uuid, email, role };
     const token = await jwt.create(token_data);
@@ -44,7 +49,7 @@ const login = async (req, res) => {
     });
 
     return res.status(200).json(
-      success("Login Berhasil", {
+      apiResponse.success("Login Berhasil", {
         id: id,
         uuid: uuid,
         email: email,
@@ -53,7 +58,7 @@ const login = async (req, res) => {
     );
   } catch (err) {
     console.log(err);
-    return res.status(500).json(error("Kesalahan Server"));
+    return res.status(500).json(apiResponse.error("Kesalahan Server"));
   }
 };
 

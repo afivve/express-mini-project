@@ -1,0 +1,49 @@
+const { User } = require("../../database/models");
+const jwt = require("../../utils/token.utils");
+
+const apiResponse = require("../../utils/response.js");
+
+const refreshToken = async (req, res) => {
+  try {
+    const refresh_token = req.cookies.refreshToken;
+    if (!refresh_token)
+      return res
+        .status(401)
+        .json(apiResponse.error("Silahkan Login Terlebih Dahulu"));
+    const user = await User.findAll({
+      where: {
+        refreshToken: refresh_token,
+      },
+    });
+    if (!user[0])
+      return res
+        .status(401)
+        .json(apiResponse.error("Silahkan Login Terlebih Dahulu"));
+    jwt.verify(refresh_token, process.env.REFRESH_TOKEN, (err, decoded) => {
+      if (err)
+        return res
+          .status(401)
+          .json(apiResponse.error("Silahkan Login Terlebih Dahulu"));
+      const userId = user[0].id;
+      const uuid = user[0].uuid;
+      const email = user[0].email;
+      const role = user[0].role;
+      const token = jwt.sign(
+        { userId, uuid, email, role },
+        process.env.TOKEN_KEY,
+        {
+          expiresIn: "1d",
+        }
+      );
+      res.status(201).json(
+        apiResponse.success("Refresh Token Berhasil Dibuat", {
+          refreshToken: token,
+        })
+      );
+    });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+module.exports = refreshToken;

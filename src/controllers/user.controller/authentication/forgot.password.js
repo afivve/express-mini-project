@@ -83,7 +83,7 @@ const sendOtpNewPassword = async (req, res) => {
 };
 
 const newPassword = async (req, res) => {
-  const { email, otp, password, confPassword } = req.body;
+  const { email, otp, password } = req.body;
 
   await Promise.all(
     newPasswordValidator.map((validator) => validator.run(req))

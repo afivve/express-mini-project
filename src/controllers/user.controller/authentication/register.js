@@ -1,6 +1,5 @@
 const { User, Otp } = require("../../../database/models");
 const { nanoid } = require("nanoid");
-// const { validationResult } = require("express-validator");
 // const { registerValidator } = require("../../../validation/auth.validation.js");
 const { error, success } = require("../../../utils/response.js");
 const { hashData } = require("../../../utils/hash.data.js");
@@ -10,25 +9,15 @@ const { generateOTP } = require("../../../utils/generate.otp.js");
 const { AUTH_EMAIL } = process.env;
 
 const register = async (req, res) => {
-  const { email, password } = req.body;
-
-  // await Promise.all(registerValidator.map((validator) => validator.run(req)));
-  // const validation_errors = validationResult(req);
-
-  // if (!validation_errors.isEmpty()) {
-  //   const error_messages = validation_errors.array().map((error) => error.msg);
-  //   return res.status(400).json(error(error_messages.join(", ")));
-  // }
-
   try {
-    const existing_user = await User.findOne({ where: { email } });
+    const { email, password } = req.body;
 
+    const existing_user = await User.findOne({ where: { email } });
     if (existing_user) {
       return res.status(409).json(error("Email sudah terdaftar"));
     }
 
     const uuid = nanoid();
-
     const hashed_password = await hashData(password);
 
     await User.create({
@@ -37,7 +26,7 @@ const register = async (req, res) => {
       password: hashed_password,
     });
 
-    await sendVerificationEmail(email);
+    // await sendVerificationEmail(email);
 
     res.status(201).json(success("Cek Email Untuk Verifikasi OTP", { email }));
   } catch (err) {
@@ -46,7 +35,7 @@ const register = async (req, res) => {
   }
 };
 
-const sendVerificationEmail = async (email) => {
+/* const sendVerificationEmail = async (email) => {
   try {
     const transporter = createTransporter();
     await transporter.verify();
@@ -85,7 +74,7 @@ const sendVerificationEmail = async (email) => {
     throw new Error("Kesalahan Server. Gagal Membuat OTP");
   }
 };
-
+ */
 module.exports = {
   register,
 };

@@ -1,6 +1,5 @@
 const { User, Profile } = require("../../database/models");
-
-const { error, success } = require("../../utils/response.js");
+const apiResponse = require("../../utils/response.js");
 
 const createProfile = async (req, res) => {
   const uuid = req.uuid;
@@ -8,7 +7,9 @@ const createProfile = async (req, res) => {
 
   try {
     if (!uuid)
-      return res.status(401).json(error("Silahkan Login Terlebih Dahulu"));
+      return res
+        .status(401)
+        .json(apiResponse.error("Silahkan Login Terlebih Dahulu"));
 
     const user = await User.findOne({
       where: {
@@ -45,13 +46,11 @@ const createProfile = async (req, res) => {
 
     return res
       .status(201)
-      .json(success("Data Profil Berhasil Dibuat", response));
+      .json(apiResponse.success("Data Profil Berhasil Dibuat", response));
   } catch (err) {
     console.log(err);
-    return res.status(500).json(error("Terjadi Kesalahan Server"));
+    return res.status(500).json(apiResponse.error("Terjadi Kesalahan Server"));
   }
 };
 
-module.exports = {
-  createProfile,
-};
+module.exports = createProfile;

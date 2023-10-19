@@ -7,10 +7,11 @@ module.exports = {
 
     return response;
   },
-  error: (msg, data = null) => {
-    return {
-      error: true,
-      message: msg,
-    };
+  error: (msg) => {
+    const response = {};
+    response.error = true;
+    response.message = msg;
+
+    return response;
   },
 };
